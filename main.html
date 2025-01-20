@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added for responsiveness -->
+        <title>Number Guessing Game</title>
+        <style>
+          /* General Styles */
+          body {
+            font-family: "Arial", sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+          }
+    
+          h1 {
+            color: #4A90E2;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+          }
+    
+          p {
+            font-size: 1.2rem;
+          }
+    
+          .form {
+            margin: 40px 0;
+          }
+    
+          /* Input field styles updated */
+          .form input[type="number"] {
+            width: 100%;  /* Full width on mobile */
+            max-width: 500px;  /* Maximum width for larger screens */
+            padding: 20px;  /* Increased padding */
+            font-size: 1.5rem;  /* Larger text */
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            display: block;
+            text-align: center; /* Center text inside the input */
+            margin: 10px auto; /* Center the input field */
+          }
+    
+          .form input[type="submit"] {
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+          }
+       
+          .form input[type="submit"]:hover {
+            background-color: #357ABD;
+          }
+    
+          .resultParas {
+            margin-top: 20px;
+          }
+    
+          .lastResult {
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            width: auto;
+            text-align: center;
+          }
+    
+          button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+          }
+    
+          button:hover {
+            background-color: #45A049;
+          }
+        </style>
+      </head>
+    
+
+  <body>
+    <h1>Happy Birthday, Bubblu!</h1>
+    <p>Wishing you a day so legendary that even your coffee needs a coffee to keep up with you. Here is to a year filled with belly laughs, big wins, and snacks that never run out!</p>
+    <p>Now, let us play a little game. I have picked a random number between 1 and 100. You have got 10 chances to crack my code. Guess too high, and I will tell you to chill. Guess too low, and I will say, “That is too low!” Think you have got what it takes? Let us see! 😏</p>
+    <label for="guessField" style="font-size: 1.5rem;">Enter a guess: </label> 
+    <input type="number" min="1" max="100" required id="guessField" class="guessField" style="width: 100%; max-width: 100px; padding: 12px; font-size: 1.2rem;"> 
+    <input type="submit" value="Submit guess" class="guessSubmit" style="font-size: 1.2rem;">
+    </div>
+
+    <div class="resultParas">
+      <p class="guesses"></p>
+      <p class="lastResult"></p>
+      <p class="lowOrHi"></p>
+    </div>
+
+    <script>
+      let randomNumber = Math.floor(Math.random() * 100) + 1;
+
+      const guesses = document.querySelector(".guesses");
+      const lastResult = document.querySelector(".lastResult");
+      const lowOrHi = document.querySelector(".lowOrHi");
+
+      const guessSubmit = document.querySelector(".guessSubmit");
+      const guessField = document.querySelector(".guessField");
+
+      let guessCount = 1;
+      let resetButton;
+      guessField.focus();
+
+      function checkGuess() {
+        const userGuess = Number(guessField.value);
+        if (guessCount === 1) {
+          guesses.textContent = "Previous guesses:";
+        }
+        guesses.textContent = `${guesses.textContent} ${userGuess}`;
+
+        if (userGuess === randomNumber) {
+          lastResult.textContent = "🎉 Congratulations! You got it right!";
+          lastResult.style.backgroundColor = "#4CAF50";
+          lowOrHi.textContent = "";
+          confettiAnimation();
+          setGameOver();
+        } else if (guessCount === 10) {
+          lastResult.textContent = "💔 GAME OVER!";
+          lastResult.style.backgroundColor = "#E74C3C";
+          lowOrHi.textContent = "";
+          setGameOver();
+        } else {
+          lastResult.textContent = "Wrong!";
+          lastResult.style.backgroundColor = "#E74C3C";
+          if (userGuess < randomNumber) {
+            lowOrHi.textContent = "That is too low!";
+          } else if (userGuess > randomNumber) {
+            lowOrHi.textContent = "Just chill, chill. Just chill";
+          }
+        }
+
+        guessCount++;
+        guessField.value = "";
+        guessField.focus();
+      }
+
+      guessSubmit.addEventListener("click", checkGuess);
+
+      function setGameOver() {
+        guessField.disabled = true;
+        guessSubmit.disabled = true;
+        resetButton = document.createElement("button");
+        resetButton.textContent = "Start new game";
+        document.body.append(resetButton);
+        resetButton.addEventListener("click", resetGame);
+      }
+
+      function resetGame() {
+        guessCount = 1;
+
+        const resetParas = document.querySelectorAll(".resultParas p");
+        for (const resetPara of resetParas) {
+          resetPara.textContent = "";
+        }
+
+        resetButton.parentNode.removeChild(resetButton);
+
+        guessField.disabled = false;
+        guessSubmit.disabled = false;
+        guessField.value = "";
+        guessField.focus();
+
+        lastResult.style.backgroundColor = "white";
+
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+      }
+
+      function confettiAnimation() {
+        const confettiColors = ["#FFD700", "#FF4500", "#4CAF50", "#1E90FF", "#EE82EE"];
+        for (let i = 0; i < 100; i++) {
+          const confetti = document.createElement("div");
+          confetti.style.position = "absolute";
+          confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+          confetti.style.width = `${Math.random() * 5 + 5}px`;
+          confetti.style.height = confetti.style.width;
+          confetti.style.borderRadius = "50%";
+          confetti.style.top = `${Math.random() * window.innerHeight}px`;
+          confetti.style.left = `${Math.random() * window.innerWidth}px`;
+          confetti.style.animation = `fall 2s linear ${Math.random()}s forwards`;
+          document.body.appendChild(confetti);
+          setTimeout(() => confetti.remove(), 2000);
+        }
+      }
+    </script>
+  </body>
+</html>
